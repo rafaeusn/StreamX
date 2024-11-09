@@ -1,0 +1,222 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000000;
+    overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000000;
+    padding: 10px 20px;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar .logo img {
+    width: 70px;
+    background-color: rgb(115, 195, 206);
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+}
+
+.search-bar {
+    display: flex;
+}
+
+.search-bar input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.search-bar button {
+    padding: 8px 15px;
+    background-color: rgb(115, 195, 206);
+    color: #000000;
+    border: none;
+    border-radius: 4px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.search-bar button:hover {
+    background-color: rgb(115, 195, 206);
+}
+/* Filme em destaque */
+.filme-destaque {
+    position: relative;
+    width: 100%;
+    height: 700px;
+    overflow: hidden;
+}
+
+.filme-destaque img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.descricao-destaque {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6); 
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 750px;
+}
+
+.descricao-destaque h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.descricao-destaque p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.trailer-btn {
+    padding: 10px 20px;
+    background-color:rgb(115, 195, 206);
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Ajuste do carrossel */
+.carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 90%;
+    margin: auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.carousel {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.filme-item {
+    color: white;
+    min-width: 200px;
+    max-width: 200px;
+    margin: 0 10px;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.filme-item img {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 12;
+}
+
+.prev {
+    left: -20px;  
+}
+
+.next {
+    right: -20px; 
+}
+.carousel-container + .carousel-container {
+    margin-top: 100px;
+}
+/* Para ser acessivel com outros tamanhos de tela*/
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .navbar .logo img {
+        width: 100px;
+    }
+
+    .navbar ul {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .search-bar input, .search-bar button {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        padding: 5px;
+    }
+
+    .navbar .logo img {
+        width: 80px;
+    }
+
+    .navbar ul {
+        gap: 5px;
+    }
+
+    .navbar a {
+        font-size: 0.9rem;
+    }
+
+    .search-bar input, .search-bar button {
+        font-size: 0.9rem;
+        padding: 5px;
+    }
+}

@@ -1,0 +1,103 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #1a1a1a, #333);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-attachment: fixed;
+}
+
+.login-container {
+    background-color: rgba(51, 51, 51, 0.9);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.login-container:hover {
+    transform: scale(1.02);
+}
+
+.login-container h1 {
+    margin-bottom: 24px;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: #f0f0f0;
+    text-transform: uppercase;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 14px;
+    margin: 12px 0;
+    border: 2px solid #555;
+    border-radius: 5px;
+    background-color: #444;
+    color: #fff;
+    font-size: 16px;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.login-container input:focus {
+    outline: none;
+    border-color: rgb(255, 255, 255);
+    background-color: #555;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 14px;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 5px;
+    color: #000000;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-container button:hover {
+    background-color: #9cc4c4;
+    transform: translateY(-2px);
+}
+
+.login-container button:active {
+    background-color: #1ae4ff;
+    transform: translateY(0);
+}
+
+.login-container a {
+    color: rgb(0, 255, 255);
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+    margin-top: 20px;
+    transition: color 0.3s ease;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+    color: rgb(0, 255, 255);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-container {
+    animation: fadeIn 0.8s ease;
+}
