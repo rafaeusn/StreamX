@@ -25,6 +25,10 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - StreamX</title>
     <link rel="stylesheet" href="../styles.css/menu.css">
+    <!-- Adicionando CSS do Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
 </head>
 <body>
     <!-- Navbar -->
@@ -37,8 +41,31 @@ $result = $conn->query($sql);
                 <ul>
                     <li><a href="menu.html">Início</a></li>
                     <li><a href="#">Filmes</a></li>
-                    <li><a href="#">Séries</a></li>
-                    <li><a href="#">Categorias</a></li>
+                    <?php
+// Query para obter todos os gêneros
+$sqlGeneros = "SELECT ID_Genero, Nome FROM Genero"; // Seleciona os gêneros
+
+$resultGeneros = $conn->query($sqlGeneros);
+?>
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Gêneros
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <?php
+        // Exibindo os gêneros do banco de dados
+        if ($resultGeneros->num_rows > 0) {
+            while ($row = $resultGeneros->fetch_assoc()) {
+                echo '<a class="dropdown-item" href="#">' . htmlspecialchars($row["Nome"]) . '</a>';
+            }
+        } else {
+            echo "<a class='dropdown-item' href='#'>Nenhum gênero encontrado</a>";
+        }
+        ?>
+    </div>
+</li>
+
                 </ul>
             </nav>
             <div class="search-bar">
@@ -53,14 +80,17 @@ $result = $conn->query($sql);
 
     <!-- Filme em Destaque -->
     <section class="filme-destaque">
-        <img src="../images/jurassic3.jpg" alt="Jurassic Park 3">
-        <div class="descricao-destaque">
-            <h1>Jurassic Park 3</h1>
-            <p>O paleontólogo Alan Grant é contratado por um empresário e sua esposa para fazer uma excursão aérea pela Ilha Sorna,
-                onde dinossauros clonados vivem livremente. No entanto, um acidente deixa o grupo de sete pessoas preso na ilha,
-                cercado por dinossauros carnívoros. Agora, eles precisam lutar para sobreviver e encontrar uma maneira de escapar.</p>
-            <button class="trailer-btn">Trailer</button>
-        </div>
+    <video autoplay loop muted playsinline class="video-fundo">
+        <source src="jurassic.mp4" type="video/mp4">
+        Seu navegador não suporta o elemento de vídeo.
+    </video>
+    <div class="descricao-destaque">
+        <h1>Jurassic Park 3</h1>
+        <p>O paleontólogo Alan Grant é contratado por um empresário e sua esposa para fazer uma excursão aérea pela Ilha Sorna,
+            onde dinossauros clonados vivem livremente. No entanto, um acidente deixa o grupo de sete pessoas preso na ilha,
+            cercado por dinossauros carnívoros. Agora, eles precisam lutar para sobreviver e encontrar uma maneira de escapar.</p>
+        <button class="trailer-btn">Trailer</button>
+    </div>
     </section>
 
     <!-- Filmes Comédia (Carrossel) -->
@@ -88,37 +118,6 @@ $result = $conn->query($sql);
         </div>
     </section>
 
-    <!-- Filmes Ação -->
-    <section class="filmes-acao">
-        <h2>Ação</h2>
-        <div class="carousel-container" id="acao-carousel">
-            <button class="prev" onclick="moveCarousel(-1, 'acao-carousel')">&#10094;</button>
-            <div class="carousel">
-                <div class="filme-item">
-                    <img src="../images/matrix.jpg" alt="Matrix">
-                    <p>Matrix</p>
-                    <span>Avaliação: 8.7/10</span>
-                </div>
-                <div class="filme-item">
-                    <img src="../images/vingadores-ultimato.webp" alt="Vingadores: Ultimato">
-                    <p>Vingadores: Ultimato</p>
-                    <span>Avaliação: 9.8/10</span>
-                </div>
-                <div class="filme-item">
-                    <img src="../images/missao-impossivel.webp" alt="Missão Impossível">
-                    <p>Missão Impossível</p>
-                    <span>Avaliação: 7.8/10</span>
-                </div>
-                <div class="filme-item">
-                    <img src="../images/atraves-do-aranhaverso.jpg" alt="Homem-Aranha: Através do Aranhaverso">
-                    <p>Homem-Aranha: Através do Aranhaverso</p>
-                    <span>Avaliação: 9.2/10</span>
-                </div>
-            </div>
-            <button class="next" onclick="moveCarousel(1, 'acao-carousel')">&#10095;</button>
-        </div>
-    </section>
-
     <script>
         function moveCarousel(direction, carouselId) {
             const carouselContainer = document.querySelector(`#${carouselId} .carousel`);
@@ -138,5 +137,9 @@ $result = $conn->query($sql);
             carouselContainer.setAttribute('data-current-index', currentIndex);
         }
     </script>
+    <!-- Scripts do Bootstrap (necessários para o dropdown funcionar) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

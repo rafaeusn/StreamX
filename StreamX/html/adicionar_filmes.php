@@ -33,13 +33,22 @@ $query = "SELECT f.ID_Filme, f.Titulo, f.Ano, c.Descricao AS Classificacao,
           WHERE f.Ativo = 1";
 $stmt = $conn->query($query);
 
-// Consulta para buscar todos os gêneros
+// Consulta para buscar todos os gêneros e armazenar em um array
 $queryGeneros = "SELECT ID_Genero, Nome FROM Genero";
 $resultGeneros = $conn->query($queryGeneros);
+$generosArray = [];
+while ($genre = $resultGeneros->fetch_assoc()) {
+    $generosArray[] = $genre;
+}
 
-// Consulta para buscar todas as classificações indicativas
+// Consulta para buscar todas as classificações indicativas e armazenar em um array
 $queryClassificacao = "SELECT ID_Classificacao, Descricao FROM Classificacao_indicativa";
 $resultClassificacao = $conn->query($queryClassificacao);
+$classificacaoArray = [];
+while ($class = $resultClassificacao->fetch_assoc()) {
+    $classificacaoArray[] = $class;
+}
+
 
 // Processamento do formulário para adicionar filme
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addMovie'])) {
@@ -157,8 +166,73 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteMovie'])) {
         }
     }
 }
+
+// Processamento do formulário para atualizar filme
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateMovie'])) {
+    $movieIdUpdate = $_POST['movieId'];
+    $movieName = $_POST['movieName'];
+    $rentalPrice = $_POST['rentalPrice'];
+    $premierYear = $_POST['premierYear'];
+    $genre = $_POST['genre'];
+    $ageClassification = $_POST['ageClassification'];
+
+    // Processar a imagem
+    $imagePath = '';
+    if (isset($_FILES['movieImage']) && $_FILES['movieImage']['error'] == 0) {
+        $imageTmpName = $_FILES['movieImage']['tmp_name'];
+        $imageName = $_FILES['movieImage']['name'];
+        $imageExt = pathinfo($imageName, PATHINFO_EXTENSION);
+
+        // Definir o diretório de upload
+        $uploadDir = '../uploads/';
+        $imagePath = $uploadDir . uniqid() . '.' . $imageExt;
+
+        // Validar e mover a imagem
+        if (in_array($imageExt, ['jpg', 'jpeg', 'png', 'gif'])) {
+            move_uploaded_file($imageTmpName, $imagePath);
+        } else {
+            echo "<p>Formato de imagem inválido! Apenas JPG, JPEG, PNG e GIF são permitidos.</p>";
+            exit;
+        }
+    }
+
+    if (!empty($movieIdUpdate) && !empty($movieName) && !empty($rentalPrice) && !empty($premierYear) && !empty($genre) && !empty($ageClassification)) {
+        $conn->begin_transaction();
+
+        try {
+            // Atualizar informações do filme
+            $stmt = $conn->prepare("UPDATE Filme SET Titulo = ?, Ano = ?, fk_Classificacao_indicativa_ID_Classificacao = ?, Imagem = ? WHERE ID_Filme = ?");
+            if ($stmt === false) {
+                throw new Exception("Erro ao preparar a declaração: " . $conn->error);
+            }
+
+            $stmt->bind_param('siisi', $movieName, $premierYear, $ageClassification, $imagePath, $movieIdUpdate);
+            $stmt->execute();
+            $stmt->close();
+
+            // Atualizar gênero do filme
+            $stmt = $conn->prepare("UPDATE Pertence SET fk_Genero_ID_Genero = ? WHERE fk_Filme_ID_Filme = ?");
+            $stmt->bind_param('ii', $genre, $movieIdUpdate);
+            $stmt->execute();
+            $stmt->close();
+
+            $conn->commit();
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        } catch (Exception $e) {
+            $conn->rollback();
+            echo "<p>Erro ao atualizar o filme: " . $e->getMessage() . "</p>";
+        }
+    } else {
+        echo "<p>Preencha todos os campos obrigatórios!</p>";
+    }
+}
 ?>
 
+
+
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -173,6 +247,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteMovie'])) {
         function closePopup() {
             document.getElementById('addMoviePopup').style.display = 'none';
         }
+
+        function openEditPopup(id, title, year, genreId, classificationId, imagePath) {
+            document.getElementById('editMoviePopup').style.display = 'block';
+            document.getElementById('movieIdUpdate').value = id;
+            document.getElementById('editMovieName').value = title;
+            document.getElementById('editPremierYear').value = year;
+            document.getElementById('editGenre').value = genreId;
+            document.getElementById('editAgeClassification').value = classificationId;
+
+            if (imagePath && imagePath.trim() !== '') {
+                document.getElementById('currentImage').src = imagePath;
+                document.getElementById('currentImage').style.display = 'block';
+            } else {
+                document.getElementById('currentImage').style.display = 'none';
+            }
+        }
+
+        function closeEditPopup() {
+            document.getElementById('editMoviePopup').style.display = 'none';
+        }
     </script>
 </head>
 <body>
@@ -183,13 +277,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteMovie'])) {
             <nav>
                 <ul>
                     <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Clientes</a></li>
-                    <li><a href="#">Filmes</a></li>
-                    <li><a href="#">Atividades</a></li>
-                    <li><a href="#">Aluguéis</a></li>
-                    <li><a href="#">Eventos</a></li>
-                    <li><a href="#">Financeiro</a></li>
-                    <li><a href="#">Relatórios</a></li>
                 </ul>
             </nav>
         </aside>
@@ -202,9 +289,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteMovie'])) {
 
             <?php while ($row = $stmt->fetch_assoc()): ?>
                 <?php
-                // Converte a data de UTC para o fuso horário de São Paulo
-                $dateTime = new DateTime($row['Dt_Adicao'], new DateTimeZone('UTC'));  // Converte de UTC
-                $dateTime->setTimezone(new DateTimeZone('America/Sao_Paulo'));  // Ajusta para o fuso horário de São Paulo
+                $dateTime = new DateTime($row['Dt_Adicao'], new DateTimeZone('UTC'));
+                $dateTime->setTimezone(new DateTimeZone('America/Sao_Paulo'));
                 $formattedDate = $dateTime->format('d/m/Y');
                 ?>
                 <div class="movie-item">
@@ -222,14 +308,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteMovie'])) {
                     <form method="POST">
                         <input type="hidden" name="movieId" value="<?php echo $row['ID_Filme']; ?>">
                         <button type="submit" name="inactivateMovie">Inativar</button>
+                        <button type="button" onclick="openEditPopup(
+                            <?php echo htmlspecialchars(json_encode($row['ID_Filme'])); ?>,
+                            <?php echo htmlspecialchars(json_encode($row['Titulo'])); ?>,
+                            <?php echo htmlspecialchars(json_encode($row['Ano'])); ?>,
+                            <?php echo htmlspecialchars(json_encode($row['Genero'])); ?>,
+                            <?php echo htmlspecialchars(json_encode($row['Classificacao'])); ?>,
+                            '<?php echo htmlspecialchars($row['Imagem']); ?>'
+                        )"name="alterMovie">Alterar</button>
                         <button type="submit" name="deleteMovie">Excluir</button>
                     </form>
                 </div>
             <?php endwhile; ?>
         </section>
     </div>
-
-    <!-- Popup Adicionar Filme -->
     <div id="addMoviePopup" class="popup" style="display: none;">
         <div class="popup-content">
             <span class="close" onclick="closePopup()">&times;</span>
@@ -247,25 +339,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteMovie'])) {
                 oninput="this.setCustomValidity('')">
 
                 <label for="genre">Gênero:</label>
-                <select name="genre" required>
-                    <option value="">Selecione</option>
-                    <?php while ($genre = $resultGeneros->fetch_assoc()): ?>
-                        <option value="<?php echo $genre['ID_Genero']; ?>"><?php echo htmlspecialchars($genre['Nome']); ?></option>
-                    <?php endwhile; ?>
-                </select>
+<select name="genre" required>
+    <option value="">Selecione</option>
+    <?php foreach ($generosArray as $genre): ?>
+        <option value="<?php echo $genre['ID_Genero']; ?>"><?php echo htmlspecialchars($genre['Nome']); ?></option>
+    <?php endforeach; ?>
+</select>
 
-                <label for="ageClassification">Classificação Indicativa:</label>
-                <select name="ageClassification" required>
-                    <option value="">Selecione</option>
-                    <?php while ($class = $resultClassificacao->fetch_assoc()): ?>
-                        <option value="<?php echo $class['ID_Classificacao']; ?>"><?php echo htmlspecialchars($class['Descricao']); ?></option>
-                    <?php endwhile; ?>
-                </select>
+<label for="ageClassification">Classificação Indicativa:</label>
+<select name="ageClassification" required>
+    <option value="">Selecione</option>
+    <?php foreach ($classificacaoArray as $class): ?>
+        <option value="<?php echo $class['ID_Classificacao']; ?>"><?php echo htmlspecialchars($class['Descricao']); ?></option>
+    <?php endforeach; ?>
+</select>
+
 
                 <label for="movieImage">Imagem do Filme:</label>
                 <input type="file" name="movieImage" id="movieImage" accept="image/*">
 
                 <button type="submit" name="addMovie">Adicionar Filme</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup Editar Filme -->
+    <div id="editMoviePopup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <span class="close" onclick="closeEditPopup()">&times;</span>
+            <h2>Editar Filme</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" id="movieIdUpdate" name="movieId">
+                
+                <label for="editMovieName">Nome do Filme:</label>
+                <input type="text" id="editMovieName" name="movieName" required>
+
+                <label for="editRentalPrice">Preço de Aluguel:</label>
+                <input type="number" id="editRentalPrice" name="rentalPrice" required>
+
+                <label for="editPremierYear">Ano de Lançamento:</label>
+                <input type="number" name="premierYear" id="editPremierYear" required min="1900" max="2100">
+
+                <label for="editGenre">Gênero:</label>
+<select name="genre" id="editGenre" required>
+    <option value="">Selecione</option>
+    <?php foreach ($generosArray as $genre): ?>
+        <option value="<?php echo $genre['ID_Genero']; ?>"><?php echo htmlspecialchars($genre['Nome']); ?></option>
+    <?php endforeach; ?>
+</select>
+
+<label for="editAgeClassification">Classificação Indicativa:</label>
+<select name="ageClassification" id="editAgeClassification" required>
+    <option value="">Selecione</option>
+    <?php foreach ($classificacaoArray as $class): ?>
+        <option value="<?php echo $class['ID_Classificacao']; ?>"><?php echo htmlspecialchars($class['Descricao']); ?></option>
+    <?php endforeach; ?>
+</select>
+
+
+                <label for="editMovieImage">Imagem do Filme:</label>
+                <input type="file" name="movieImage" id="editMovieImage" accept="image/*">
+                <img id="currentImage" src="" alt="Imagem atual do filme" width="100" style="display: none;">
+
+                <button type="submit" name="updateMovie">Salvar Alterações</button>
             </form>
         </div>
     </div>

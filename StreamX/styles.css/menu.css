@@ -1,12 +1,13 @@
-* {
-    margin: 0;
+* { 
+    margin: 0;  
     padding: 0;
     box-sizing: border-box;
 }
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #000000;
+    background-color: #000000 !important; /* Garantir que o fundo seja preto */
+    color: #fff; /* Cor do texto */
     overflow-x: hidden;
 }
 
@@ -15,7 +16,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #000000;
+    background-color: #000000 !important; /* Garantir fundo preto */
     padding: 10px 20px;
     position: fixed;
     width: 100%;
@@ -67,6 +68,7 @@ body {
 .search-bar button:hover {
     background-color: rgb(115, 195, 206);
 }
+
 /* Filme em destaque */
 .filme-destaque {
     position: relative;
@@ -104,7 +106,7 @@ body {
 
 .trailer-btn {
     padding: 10px 20px;
-    background-color:rgb(115, 195, 206);
+    background-color: rgb(115, 195, 206);
     color: rgb(0, 0, 0);
     border: none;
     border-radius: 5px;
@@ -165,10 +167,12 @@ body {
 .next {
     right: -20px; 
 }
+
 .carousel-container + .carousel-container {
     margin-top: 100px;
 }
-/* Para ser acessivel com outros tamanhos de tela*/
+
+/* Para ser acessível com outros tamanhos de tela*/
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
@@ -219,4 +223,19 @@ body {
         font-size: 0.9rem;
         padding: 5px;
     }
+}
+
+/* Estilo para o menu suspenso (dropdown) */
+.navbar .nav-item.dropdown .dropdown-menu {
+    background-color: #000000 !important; /* Fundo preto */
+}
+
+.dropdown-item {
+    background-color: #000000 !important; /* Fundo preto para os itens */
+    color: #fff !important; /* Cor do texto branca */
+}
+
+.dropdown-item:hover {
+    background-color: rgb(115, 195, 206) !important; /* Cor do fundo quando passar o mouse */
+    color: #000000 !important; /* Cor do texto quando passar o mouse */
 }
