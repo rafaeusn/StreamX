@@ -39,30 +39,31 @@ $result = $conn->query($sql);
             </div>
             <nav>
                 <ul>
-                    <li><a href="menu.html">Início</a></li>
+                    <li><a href="menu.php">Início</a></li>
                     <li><a href="#">Filmes</a></li>
+                    <li class="nav-item dropdown">
+                    <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Gêneros
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <?php
 // Query para obter todos os gêneros
 $sqlGeneros = "SELECT ID_Genero, Nome FROM Genero"; // Seleciona os gêneros
 
 $resultGeneros = $conn->query($sqlGeneros);
 ?>
-
-<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Gêneros
-    </a>
-    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
         <?php
-        // Exibindo os gêneros do banco de dados
-        if ($resultGeneros->num_rows > 0) {
-            while ($row = $resultGeneros->fetch_assoc()) {
-                echo '<a class="dropdown-item" href="#">' . htmlspecialchars($row["Nome"]) . '</a>';
-            }
-        } else {
-            echo "<a class='dropdown-item' href='#'>Nenhum gênero encontrado</a>";
-        }
-        ?>
+// Exibindo os gêneros do banco de dados
+if ($resultGeneros->num_rows > 0) {
+    while ($row = $resultGeneros->fetch_assoc()) {
+        // Adicionando o link para a página do gênero
+        echo '<a class="dropdown-item" href="filmes_genero.php?id_genero=' . $row["ID_Genero"] . '">' . htmlspecialchars($row["Nome"]) . '</a>';
+    }
+} else {
+    echo "<a class='dropdown-item' href='#'>Nenhum gênero encontrado</a>";
+}
+?>
+
     </div>
 </li>
 

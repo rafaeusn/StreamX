@@ -1,9 +1,11 @@
+/* Resetando margens e padding para todos os elementos */
 * { 
     margin: 0;  
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Estilo para o corpo da página */
 body {
     font-family: Arial, sans-serif;
     background-color: #000000 !important; /* Garantir que o fundo seja preto */
@@ -32,6 +34,7 @@ body {
     list-style: none;
     display: flex;
     gap: 20px;
+    align-items: center; /* Alinha os itens verticalmente */
 }
 
 .navbar a {
@@ -73,14 +76,17 @@ body {
 .filme-destaque {
     position: relative;
     width: 100%;
-    height: 700px;
+    height: 550px;
     overflow: hidden;
 }
-
-.filme-destaque img {
+.video-fundo {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    z-index: -1;
 }
 
 .descricao-destaque {
@@ -161,18 +167,23 @@ body {
 }
 
 .prev {
-    left: -20px;  
+    left: 10px; /* Ajusta a posição para a esquerda */
 }
 
 .next {
-    right: -20px; 
+    right: 10px; /* Ajusta a posição para a direita */
+}
+
+/* Garantir que o carrossel tenha o espaço correto */
+.carousel-container {
+    padding: 0 40px; /* Dê um espaço extra nas laterais para os botões */
 }
 
 .carousel-container + .carousel-container {
     margin-top: 100px;
 }
 
-/* Para ser acessível com outros tamanhos de tela*/
+/* Para ser acessível com outros tamanhos de tela */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
@@ -238,4 +249,10 @@ body {
 .dropdown-item:hover {
     background-color: rgb(115, 195, 206) !important; /* Cor do fundo quando passar o mouse */
     color: #000000 !important; /* Cor do texto quando passar o mouse */
+}
+.filmes-comedia {
+    margin-top: 1%;
+}
+.nav-link {
+    padding: 0;
 }

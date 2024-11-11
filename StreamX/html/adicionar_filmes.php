@@ -50,7 +50,6 @@ while ($class = $resultClassificacao->fetch_assoc()) {
 }
 
 
-// Processamento do formulário para adicionar filme
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addMovie'])) {
     $movieName = $_POST['movieName'];
     $rentalPrice = $_POST['rentalPrice'];
@@ -58,18 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addMovie'])) {
     $genre = $_POST['genre'];
     $ageClassification = $_POST['ageClassification'];
 
-    // Processar a imagem
     $imagePath = '';
     if (isset($_FILES['movieImage']) && $_FILES['movieImage']['error'] == 0) {
         $imageTmpName = $_FILES['movieImage']['tmp_name'];
         $imageName = $_FILES['movieImage']['name'];
         $imageExt = pathinfo($imageName, PATHINFO_EXTENSION);
 
-        // Definir o diretório de upload
         $uploadDir = '../uploads/';
         $imagePath = $uploadDir . uniqid() . '.' . $imageExt;
 
-        // Validar e mover a imagem
         if (in_array($imageExt, ['jpg', 'jpeg', 'png', 'gif'])) {
             move_uploaded_file($imageTmpName, $imagePath);
         } else {
@@ -89,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addMovie'])) {
             $filmId = $stmt->insert_id;
             $stmt->close();
 
-            $stmt = $conn->prepare("INSERT INTO Edita (fk_Filme_ID_Filme, Dt_Adicao) VALUES (?, ?)");
+            $stmt = $conn->prepare("INSE8RT INTO Edita (fk_Filme_ID_Filme, Dt_Adicao) VALUES (?, ?)");
             $currentDate = date('Y-m-d H:i:s');
             $stmt->bind_param('is', $filmId, $currentDate);
             $stmt->execute();
