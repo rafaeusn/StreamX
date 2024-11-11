@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addMovie'])) {
             $filmId = $stmt->insert_id;
             $stmt->close();
 
-            $stmt = $conn->prepare("INSE8RT INTO Edita (fk_Filme_ID_Filme, Dt_Adicao) VALUES (?, ?)");
+            $stmt = $conn->prepare("INSERT INTO Edita (fk_Filme_ID_Filme, Dt_Adicao) VALUES (?, ?)");
             $currentDate = date('Y-m-d H:i:s');
             $stmt->bind_param('is', $filmId, $currentDate);
             $stmt->execute();
